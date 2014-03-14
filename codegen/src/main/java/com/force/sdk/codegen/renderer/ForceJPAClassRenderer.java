@@ -26,7 +26,11 @@
 
 package com.force.sdk.codegen.renderer;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Generated;
 import javax.persistence.Entity;
@@ -39,7 +43,11 @@ import com.force.sdk.codegen.ForceJPAClassGeneratorUtils;
 import com.force.sdk.codegen.builder.JPAAnnotationBuilder;
 import com.force.sdk.jpa.annotation.CustomObject;
 import com.force.sdk.jpa.model.*;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Maps;
 import com.sforce.soap.partner.DescribeSObjectResult;
+import com.typesafe.config.Config;
 
 /**
  * A StringTemplate {@code AttributeRenderer} that renders Java class level {@code String}s.
@@ -52,11 +60,20 @@ import com.sforce.soap.partner.DescribeSObjectResult;
  */
 public class ForceJPAClassRenderer implements AttributeRenderer {
 
+    private static final Map<DescribeSObjectResult, Config> configMap =
+            new ConcurrentHashMap<DescribeSObjectResult, Config>(Maps.<DescribeSObjectResult, Config>newHashMap());
+
+    private Config config;
+
     @Override
     public String toString(Object o) {
         return "";
     }
-    
+
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
     @Override
     public String toString(Object o, String format) {
         DescribeSObjectResult dsr = (DescribeSObjectResult) o;
@@ -71,6 +88,23 @@ public class ForceJPAClassRenderer implements AttributeRenderer {
         return toString(o);
     }
 
+    private Collection<String> getExtraAnnotations(DescribeSObjectResult dsr) {
+        if (config != null) {
+            List<String> strList;
+            if (config.hasPath(dsr.getName()))
+                strList = config.getStringList(dsr.getName());
+            else
+                strList = config.getStringList(dsr.getName().replaceAll("__c$", "").replaceAll("_", ""));
+            return Collections2.filter(strList, new Predicate<String>() {
+                @Override
+                public boolean apply(final String s) {
+                    return s.startsWith("@");
+                }
+            });
+        }
+        return Collections.emptyList();
+    }
+
     // Render annotations that are to be added to a JPA object
     // at the class level
     private String renderClassAnnotation(DescribeSObjectResult dsr) {
@@ -81,13 +115,17 @@ public class ForceJPAClassRenderer implements AttributeRenderer {
                 Collections.<String, String>singletonMap("name", "\"" + dsr.getName() + "\""));
         builder.add(Entity.class,
                 Collections.<String, String>singletonMap("name", "\"" + toString(dsr, "className") + "\""));
-        
+
         // We're generating the class off of already existing schema
         // so there won't be a need to create it.
         builder.add(CustomObject.class,
                 Collections.<String, String>singletonMap("readOnlySchema", "true"));
         
-        return builder.toString();
+        String result = builder.toString();
+        for (String s: getExtraAnnotations(dsr)) {
+            result = result + s + ForceJPAClassGeneratorUtils.NEWLINE;
+        }
+        return result;
     }
     
     private String renderSuperClassName(DescribeSObjectResult dsr) {

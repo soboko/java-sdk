@@ -29,6 +29,7 @@ package com.force.sdk.codegen;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.lang.model.SourceVersion;
 
@@ -50,6 +51,7 @@ import com.force.sdk.codegen.writer.ForceJPAFileWriterProvider;
 import com.force.sdk.codegen.writer.WriterProvider;
 import com.sforce.soap.partner.DescribeSObjectResult;
 import com.sforce.soap.partner.Field;
+import com.typesafe.config.Config;
 
 /**
  * Generator for Force.com JPA enabled Java classes.
@@ -70,14 +72,11 @@ import com.sforce.soap.partner.Field;
 public class ForceJPAClassGenerator extends AbstractCodeGenerator {
 
     // The renderers for Force.com JPA object generation
-    private static final Map<Class<?>, AttributeRenderer> RENDERER_MAP =
+    private final Map<Class<?>, AttributeRenderer> RENDERER_MAP =
         new HashMap<Class<?>, AttributeRenderer>(2);
-    
-    static {
-        RENDERER_MAP.put(DescribeSObjectResult.class, new ForceJPAClassRenderer());
-        RENDERER_MAP.put(Field.class, new ForceJPAFieldRenderer());
-    }
-    
+
+    private final ForceJPAClassRenderer CLASS_RENDERER = new ForceJPAClassRenderer();
+
     // Allow a static package name (as opposed to a dynamically
     // generated package name)
     private String packageName;
@@ -87,7 +86,13 @@ public class ForceJPAClassGenerator extends AbstractCodeGenerator {
 
     // Allow the caller to specify a FieldFilter
     private FieldFilter fieldFilter;
-    
+
+
+    public ForceJPAClassGenerator() {
+        RENDERER_MAP.put(DescribeSObjectResult.class, CLASS_RENDERER);
+        RENDERER_MAP.put(Field.class, new ForceJPAFieldRenderer());
+    }
+
     /**
      * Sets the Java package name under which the Java classes
      * will be generated.
@@ -101,6 +106,10 @@ public class ForceJPAClassGenerator extends AbstractCodeGenerator {
         }
         
         this.packageName = packageName;
+    }
+
+    public void setConfig(Config config) {
+        CLASS_RENDERER.setConfig(config);
     }
 
     @Override

@@ -123,8 +123,7 @@ public class ForceJPAFieldRenderer implements AttributeRenderer {
     // Render the Java field type for a given API field
     private String renderFieldType(Field field) {
         FieldType type = field.getType();
-        if (type == FieldType._boolean
-            || type == FieldType.combobox) {
+        if (type == FieldType._boolean) {
             return boolean.class.getName();
         } else if (type == FieldType._double
                    || type == FieldType.percent) {
@@ -140,7 +139,7 @@ public class ForceJPAFieldRenderer implements AttributeRenderer {
             return Calendar.class.getName();
         } else if (type == FieldType.url) {
             return URL.class.getName();
-        } else if (type == FieldType.picklist) {
+        } else if (type == FieldType.picklist || type == FieldType.combobox) {
             // Force the field type to be an enum for restricted picklists
             // with API enabled picklist values
             if (field.isRestrictedPicklist() && field.getPicklistValues().length > 0) return renderEnumName(field);
