@@ -227,7 +227,7 @@ public class ForceJPAFieldRendererTest {
             {FieldType._int, "int"},
             {FieldType.anyType, "String"},
             {FieldType.base64, "String"},
-            {FieldType.combobox, "boolean"},
+            {FieldType.combobox, "String"},
             {FieldType.currency, "java.math.BigDecimal"},
             {FieldType.datacategorygroupreference, "String"},
             {FieldType.date, "java.util.Date"},
