@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
@@ -9,7 +8,7 @@
   <groupId>com.force.sdk</groupId>
   <artifactId>force-sdk</artifactId>
   <name>force-sdk</name>
-  <version>22.0.9.1-SNAPSHOT</version>
+  <version>22.0.9.1</version>
   <packaging>pom</packaging>
   <description>Database.com SDK for Java</description>
   <url>http://www.force.com/</url>
@@ -59,7 +58,7 @@
     <force.version.min>22.0</force.version.min>
     <force.version.max>22.1</force.version.max>
     <force.api.version>[22.0.0, 22.1.0)</force.api.version>
-    <force.sdk.version>22.0.9.1-SNAPSHOT</force.sdk.version>
+    <force.sdk.version>22.0.9.1</force.sdk.version>
     
     <apache.http.version>4.0.1</apache.http.version>
     <commons.io.version>2.0.1</commons.io.version>
