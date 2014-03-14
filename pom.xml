@@ -9,7 +9,7 @@
   <groupId>com.force.sdk</groupId>
   <artifactId>force-sdk</artifactId>
   <name>force-sdk</name>
-  <version>22.0.10-SNAPSHOT</version>
+  <version>22.0.9.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Database.com SDK for Java</description>
   <url>http://www.force.com/</url>
@@ -21,9 +21,9 @@
     </license>
   </licenses>
   <scm>
-    <url>https://github.com/forcedotcom/java-sdk</url>
-    <connection>scm:git:git@github.com:forcedotcom/java-sdk.git</connection>
-    <developerConnection>scm:git:git@github.com:forcedotcom/java-sdk.git</developerConnection>
+    <url>https://github.com/Reputation-r4me/java-sdk</url>
+    <connection>scm:git:git@github.com:Reputation-r4me/java-sdk.git</connection>
+    <developerConnection>scm:git:git@github.com:Reputation-r4me/java-sdk.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
   <developers>
@@ -59,7 +59,7 @@
     <force.version.min>22.0</force.version.min>
     <force.version.max>22.1</force.version.max>
     <force.api.version>[22.0.0, 22.1.0)</force.api.version>
-    <force.sdk.version>22.0.10-SNAPSHOT</force.sdk.version>
+    <force.sdk.version>22.0.9.1-SNAPSHOT</force.sdk.version>
     
     <apache.http.version>4.0.1</apache.http.version>
     <commons.io.version>2.0.1</commons.io.version>
@@ -112,16 +112,16 @@
   </modules>
 
   <distributionManagement>
+    <repository>
+      <id>nexus.releases</id>
+      <name>Internal Releases</name>
+      <url>http://maven.reputationdefender.lan:8081/nexus/content/repositories/releases/</url>
+    </repository>
     <snapshotRepository>
-      <id>sonatype-nexus-snapshots</id>
-      <name>Sonatype Nexus Snapshots</name>
-      <url>${sonatype.nexus.snapshots.url}</url>
+      <id>nexus.snapshots</id>
+      <name>Internal Snapshots</name>
+      <url>http://maven.reputationdefender.lan:8081/nexus/content/repositories/snapshots/</url>
     </snapshotRepository>
-    <site>
-      <id>force.maven.site</id>
-      <name>Maven Site</name>
-      <url>file://${maven.site.destination}</url>
-    </site>
   </distributionManagement>
 
   <dependencyManagement>
@@ -348,7 +348,7 @@
                   </requireProperty>
                   <requireProperty>
                     <property>force.sdk.version</property>
-                    <regex>^(${force.version.min}).(\d+)(-SNAPSHOT|-BETA)*$</regex>
+                    <regex>^(${force.version.min}).(\d+)(.\d+)?(-SNAPSHOT|-BETA)*$</regex>
                     <regexMessage>{force.sdk.version} be in the form ${force.version.min}.d[-SNAPSHOT]</regexMessage>
                   </requireProperty>
                 </rules>
@@ -464,6 +464,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
       </plugin>
     </plugins>
 
@@ -636,7 +643,7 @@
       <activation>
         <property>
           <name>signArtifacts</name>
-          <value>true</value>
+          <value>false</value>
         </property>
       </activation>
       <build>
@@ -645,7 +652,10 @@
           <plugin>
             <artifactId>maven-gpg-plugin</artifactId>
             <version>${gpg.plugin.version}</version>
-            <executions>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+              <executions>
               <execution>
                 <id>sign-artifacts</id>
                 <phase>package</phase>
